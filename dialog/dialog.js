@@ -1,5 +1,8 @@
-define(function(require, exports, module) {
-	var $=require('jquery');
+/**
+*jquery 弹出框插件
+*author charsle
+*date 2014-09-09
+*/
 function Dialog(options){
 	this.options = $.extend({},this.options);
 	$.extend(this.options,options);
@@ -82,6 +85,4 @@ $.extend(Dialog.prototype,{
 	
 	}
 	
-});
-	return Dialog;
 });
