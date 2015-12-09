@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title>汽车标记</title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+		<style type="text/css">
+			img {
+				max-width: 100%;
+			}
+			.set_color a{margin-top: 5px;}
+		</style>
+	</head>
+
+	<body>
+		<br>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-9">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<div class="panel-title">汽车展示区</div>
+						</div>
+						<div class="panel-body">
+							<canvas id="canvas" width="830" height="510" style="background: #122B40;"></canvas>
+							<br>
+							<br>
+
+							<div id="save_img">
+
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<div class="panel-title">操作区域</div>
+						</div>
+						<div class="panel-body">
+							<a href="javascript:;" class="btn btn-danger btn-block" id="deleteTag">撤销</a>
+							<a href="javascript:;" class="btn btn-success btn-block" id="saveImage">保存</a>
+							<div class="" style="margin-top: 20px;border-bottom: 1px solid #ccc;padding: 5px;">颜色选取</div>
+							<div style="padding: 5px 0;" class="set_color">
+								<a href="javascript:;" value="#ffffff" name="color" class="btn btn-default">白色</a>
+								<a href="javascript:;" value="#d9534f" name="color" class="btn btn-danger">红色</a>
+								<a href="javascript:;" value="#5cb85c" name="color" class="btn btn-success">绿色</a>
+								<a href="javascript:;" value="#f0ad4e" name="color" class="btn btn-warning">黄色</a>
+								<a href="javascript:;" value="#5bc0de" name="color" class="btn btn-info">蓝色</a>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</body>
+
+	<script type="text/javascript">
+		window.onload = function() {
+			ChooseCar.render();
+		}
+		var ChooseCar = {
+			canvas: document.getElementById('canvas'),
+			context: this.canvas.getContext('2d'),
+			bbox: this.canvas.getBoundingClientRect(),
+			color: '#ffffff',
+			drawAcr: function(e) { //画圆
+				var _this = this;
+				e.preventDefault();
+				_this.context.beginPath();
+				var x = e.pageX - _this.bbox.left;
+				var y = e.pageY - _this.bbox.top;
+				_this.context.arc(x, y, 10, 0, Math.PI * 2, true);
+				_this.context.fillStyle = _this.color;
+				_this.context.fill();
+				_this.context.closePath();
+			},
+			//设置颜色
+			setColor: function() {
+				var _this = this;
+				var choose_a = document.getElementsByName('color');
+				for (var i = 0; i < choose_a.length; i++) {
+					! function(num) {
+						choose_a[num].onclick = function(e) {
+							var color = this.getAttribute('value');
+							_this.color = color;
+						}
+					}(i);
+				}
+			},
+			//撤销
+			deleteTag: function() {
+				this.context.fillRect(0, 0, canvas.width, canvas.height);
+				this.loadImage();
+				document.getElementById('save_img').innerHTML='';
+			},
+			//保存
+			saveImg: function() {
+				var _this = this;
+				var newImg = _this.canvas.toDataURL("image/png");
+				var save_img = document.getElementById('save_img');
+				var createImg = document.createElement('img');
+				createImg.setAttribute('src', newImg);
+				createImg.setAttribute('width', '120');
+				save_img.appendChild(createImg);
+			},
+			//加载图片
+			loadImage: function() {
+				var _this = this;
+				var img = new Image();
+				img.onload = function() {
+					_this.context.drawImage(img, 0, 0);
+				}
+				img.src = "img/car.png"; //这里动态加载图片
+			},
+			render: function() {
+				var _this = this;
+				//做标记
+				_this.canvas.addEventListener('click', function(e) {
+					_this.drawAcr(e);
+				});
+				//选择颜色事件
+				_this.setColor();
+				_this.loadImage();
+				//
+				document.getElementById('deleteTag').onclick = function() {
+					_this.deleteTag();
+				};
+				document.getElementById('saveImage').onclick = function() {
+					_this.saveImg();
+				};
+			}
+		}
+	</script>
+
+</html>
